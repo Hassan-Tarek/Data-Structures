@@ -145,15 +145,16 @@ void vector_insert_at(vector* vector, void* val, size_t index) {
  *
  * @param vector A pointer to a vector to add to.
  * @param array The array to be appended to the vector.
+ * @param array_size The number of elements in the specified array.
  */
-void vector_append_array(vector* vector, void* array) {
+void vector_append_array(vector* vector, void* array, size_t array_size) {
     assert(vector != NULL && vector->data != NULL && array != NULL);
 
-    if(vector->capacity <= (vector->size + sizeof(array) / vector->element_size) * 2)
-        vector_reserve(vector, (vector->size + sizeof(array) / vector->element_size) * 2 + 1);
+    if(vector->capacity <= (vector->size + array_size) * 2)
+        vector_reserve(vector, (vector->size + array_size) * 2 + 1);
     memcpy(vector->data + vector->size * vector->element_size,
-           array, sizeof(array));
-    vector->size += sizeof(array) / vector->element_size;
+           array, array_size * vector->element_size);
+    vector->size += array_size;
 }
 
 /**

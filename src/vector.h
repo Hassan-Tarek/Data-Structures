@@ -56,7 +56,7 @@ int vector_index_of(const vector* vector, void* val);
 void vector_push_back(vector* vector, void* val);
 void vector_push_front(vector* vector, void* val);
 void vector_insert_at(vector* vector, void* val, size_t index);
-void vector_append_array(vector* vector, void* array);
+void vector_append_array(vector* vector, void* array, size_t array_size);
 
 /* Removal */
 void vector_pop_back(vector* vector);
