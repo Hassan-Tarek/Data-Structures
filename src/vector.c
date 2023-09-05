@@ -227,6 +227,8 @@ void vector_clear(vector* vector) {
  * @param vector A pointer to the vector to free from.
  */
 void vector_destroy(vector* vector) {
+    assert(vector != NULL);
+
     if(vector) {
         free(vector->data);
         vector->data = NULL;
@@ -281,7 +283,7 @@ bool vector_is_empty(const vector* vector) {
 void vector_reserve(vector* vector, size_t new_capacity) {
     assert(vector != NULL);
 
-    realloc(vector->data, sizeof(byte) * new_capacity * vector->element_size);
+    vector->data = realloc(vector->data, sizeof(byte) * new_capacity * vector->element_size);
     vector->capacity = new_capacity;
 }
 
@@ -293,17 +295,21 @@ void vector_reserve(vector* vector, size_t new_capacity) {
 void vector_reverse(vector* vector) {
     assert(vector != NULL && vector->data != NULL);
 
-    size_t offset = 0;
-    void* temp = malloc(sizeof(byte) * vector->size * vector->element_size);
-    vector_for_each_reverse(index, vector) {
-        memmove(temp + offset * vector->element_size,
-                vector->data + index * vector->element_size,
-                sizeof(byte) * vector->element_size);
-        offset += 1;
+    size_t left = 0;
+    size_t right = vector->size - 1;
+    void* temp = (void *) malloc(vector->element_size);
+    while(left < right) {
+        void* left_ptr = vector->data + left * vector->element_size;
+        void* right_ptr = vector->data + right * vector->element_size;
+        mempcpy(temp, left_ptr, vector->element_size);
+        memcpy(left_ptr, right_ptr, vector->element_size);
+        memcpy(right_ptr, temp, vector->element_size);
+
+        left++;
+        right--;
     }
-    free(vector->data);
-    vector->data = NULL;
-    vector->data = temp;
+    free(temp);
+    temp = NULL;
 }
 
 /**
@@ -314,7 +320,7 @@ void vector_reverse(vector* vector) {
 void vector_trim(vector* vector) {
     assert(vector != NULL);
 
-    realloc(vector->data, sizeof(byte) * vector->size * vector->element_size);
+    vector->data = realloc(vector->data, sizeof(byte) * vector->size * vector->element_size);
     vector->capacity = vector->size;
 }
 
@@ -337,24 +343,19 @@ void vector_copy_to_array(const vector* vector, void* array) {
  * @param rhs A pointer to the second vector.
  */
 void vector_swap(vector* lhs, vector* rhs) {
-    assert(lhs != NULL && rhs != NULL);
+    assert(lhs != NULL && rhs != NULL && lhs->element_size == rhs->element_size);
 
-    vector* temp = (vector *) malloc(sizeof(vector));
-    vector_init(temp, lhs->element_size);
-    memmove(temp->data, lhs->data, lhs->size * lhs->element_size);
-    temp->size = lhs->size;
-    temp->capacity = lhs->capacity;
+    void* temp_data = lhs->data;
+    lhs->data = rhs->data;
+    rhs->data = temp_data;
 
-    memmove(lhs->data, rhs->data, rhs->size * rhs->element_size);
+    size_t temp_size = lhs->size;
     lhs->size = rhs->size;
-    lhs->size = rhs->size;
+    rhs->size = temp_size;
 
-    memmove(rhs->data, temp->data, temp->size * temp->element_size);
-    rhs->size = temp->size;
-    rhs->capacity = temp->capacity;
-
-    free(temp);
-    temp = NULL;
+    size_t temp_capacity = lhs->capacity;
+    lhs->capacity = rhs->capacity;
+    rhs->capacity = temp_capacity;
 }
 
 /**

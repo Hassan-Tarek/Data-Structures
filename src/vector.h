@@ -89,8 +89,8 @@ void vector_sort(vector* vector, int (* compare)(const void* lhs, const void* rh
          ++index)
 
 #define vector_for_each_reverse(index, vector_ptr) \
-    for (size_t index = (vector_ptr)->size - 1;    \
-         index >= 0;                               \
+    for (size_t index = (vector_ptr)->size;        \
+         index > 0;                                \
          --index)
 
 
