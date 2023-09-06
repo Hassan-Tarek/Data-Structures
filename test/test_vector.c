@@ -4,10 +4,10 @@
 
 #include "../src/vector.h"
 
-/* pointer functions */
+/* Pointer Functions */
 typedef void (* TestFunction) ();
 
-/* global variables */
+/* Global Variables */
 vector* first_vector;
 vector* second_vector;
 int vals[6] = {6, 1, 5, 2, 4, 3};

@@ -22,15 +22,15 @@ extern "C" {
 #include <stdbool.h>
 #include <assert.h>
 
-/* struct type declaration */
+/* Struct type declaration */
 struct vector;
 
-/* typedefs */
+/* Typedefs */
 typedef struct vector vector;
 typedef uint8_t byte;
 
 /**
- * define the struct needed for the vector
+ * Define the struct needed for the vector.
  */
 struct vector {
     byte* data;
