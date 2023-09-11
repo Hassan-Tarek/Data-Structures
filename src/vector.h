@@ -1,10 +1,8 @@
 /**
- *
  * @file     vector.h
  *
- * @brief    The Implementation of the vector
+ * @brief    The Implementation of the Vector.
  * @author   Hassan Tarek
- *
  */
 
 #ifndef VECTOR_H

@@ -40,7 +40,7 @@ void vector_init_with(vector* vector, size_t vector_length, size_t element_size,
  * @brief Copies the element data at the end from a vector to a pre-allocated memory block.
  *
  * @param vector The vector from which the last element will be retrieved.
- * @param dest Index of the element to retrieve.
+ * @param dest A pointer to the memory location where the last element will be stored.
  */
 void vector_back(const vector* vector, void* dest) {
     vector_at(vector, vector->size - 1, dest);
@@ -50,7 +50,7 @@ void vector_back(const vector* vector, void* dest) {
  * @brief Copies the element data at the begin from a vector to a pre-allocated memory block.
  *
  * @param vector The vector from which the first element will be retrieved.
- * @param dest Index of the element to retrieve.
+ * @param dest A pointer to the memory location where the first element will be stored.
  */
 void vector_front(const vector* vector, void* dest) {
     vector_at(vector, 0, dest);
@@ -61,7 +61,7 @@ void vector_front(const vector* vector, void* dest) {
  *
  * @param vector The vector from which the element at the specified index will be returned.
  * @param index The index of the wanted element.
- * @param dest Index of the element to retrieve.
+ * @param dest A pointer to the memory location where the element at the specified index will be stored.
  */
 void vector_at(const vector* vector, size_t index, void* dest) {
     assert(vector != NULL && vector->data != NULL && index < vector->size && dest != NULL);
@@ -69,7 +69,6 @@ void vector_at(const vector* vector, size_t index, void* dest) {
     memcpy(dest, vector->data + index * vector->element_size,
            sizeof(byte) * vector->element_size);
 }
-
 
 /**
  * @brief Retrieves the index of the specified value or -1 if it's not found.
@@ -194,7 +193,7 @@ void vector_remove_at(vector* vector, size_t index) {
  * @brief Remove all occurrences of the specified value from the vector.
  *
  * @param vector A pointer to the vector to remove from.
- * @param val the value to be removed from the vector.
+ * @param val The value to be removed from the vector.
  */
 void vector_remove(vector* vector, void* val) {
     assert(vector != NULL && vector->data != NULL && val != NULL);
@@ -327,8 +326,8 @@ void vector_trim(vector* vector) {
 /**
  * @brief Copies the vector data to the specified array.
  *
- * @param vector The vector that the specified array wil be copied into.
- * @param array The array to be copied to the specified vector.
+ * @param vector The vector whose data will be copied to the specified array.
+ * @param array The array where the vector's data will be copied.
  */
 void vector_copy_to_array(const vector* vector, void* array) {
     assert(vector != NULL && array != NULL);
