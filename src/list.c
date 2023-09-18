@@ -4,17 +4,18 @@
  * @brief Create a new node.
  *
  * @param val The value of the node.
+ * @param size The size in bytes of the specified value.
  * @param next A pointer to the next node.
  * @param prev A pointer to the previous node.
  *
  * @return A pointer to the newly created node.
  */
-static node* list_create_node(const void* val, node* next, node* prev) {
+static node* list_create_node(const void* val, size_t size, node* next, node* prev) {
     assert(val != NULL);
 
     node* node_ptr = (node *) malloc(sizeof(node));
-    node_ptr->val = (void *) malloc(sizeof(*val));
-    memcpy(node_ptr->val, val, sizeof(*val));
+    node_ptr->val = (byte *) malloc(size);
+    memcpy(node_ptr->val, val, size);
     node_ptr->next = next;
     node_ptr->prev = prev;
     return node_ptr;
@@ -40,13 +41,15 @@ static void list_free_node(node* node) {
  * @brief Initialize the list.
  *
  * @param list The list to be initialized.
+ * @param element_size The size in bytes of each element in the list.
  */
-void list_init(list* list) {
+void list_init(list* list, size_t element_size) {
     assert(list != NULL);
 
     list->head = NULL;
     list->tail = NULL;
     list->size = 0;
+    list->element_size = element_size;
 }
 
 /**
@@ -109,7 +112,7 @@ int list_index_of(const list* list, const void* val) {
 
     int offset = 0;
     list_for_each(node, list) {
-        int cmp = memcmp(node->val, val, sizeof(*val));
+        int cmp = memcmp(node->val, val, list->element_size);
         if(cmp == 0) {
             return offset;
         }
@@ -127,7 +130,7 @@ int list_index_of(const list* list, const void* val) {
 void list_push_back(list* list, const void* val) {
     assert(list != NULL && val != NULL);
 
-    node* node_ptr = list_create_node(val, NULL, list->tail);
+    node* node_ptr = list_create_node(val, list->element_size, NULL, list->tail);
     if(list->size == 0)
         list->head = node_ptr;
     else
@@ -145,7 +148,7 @@ void list_push_back(list* list, const void* val) {
 void list_push_front(list* list, const void* val) {
     assert(list != NULL && val != NULL);
 
-    node* node_ptr = list_create_node(val, list->head, NULL);
+    node* node_ptr = list_create_node(val, list->element_size, list->head, NULL);
     if(list->size == 0)
         list->tail = node_ptr;
     else
@@ -177,7 +180,7 @@ void list_insert_at(list* list, const void* val, size_t index) {
             cur = cur->next;
             offset++;
         }
-        node* node_ptr = list_create_node(val, cur, cur->prev);
+        node* node_ptr = list_create_node(val, list->element_size, cur, cur->prev);
         cur->prev->next = node_ptr;
         cur->prev = node_ptr;
         list->size++;
@@ -260,8 +263,8 @@ void list_remove(list* list, const void* val) {
 
     size_t offset = 0;
     node* cur = list->head;
-    while(cur != NULL) {
-        int cmp = memcmp(cur->val, val, sizeof(*val));
+    while(cur != NULL && offset < list->size) {
+        int cmp = memcmp(cur->val, val, list->element_size);
         if(cmp == 0) {
             cur = cur->next;
             list_remove_at(list, offset);

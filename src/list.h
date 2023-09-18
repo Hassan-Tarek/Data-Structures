@@ -1,7 +1,7 @@
 /**
  * @file     list.h
  *
- * @brief    The Implementation of Doubly Linked List
+ * @brief    The Implementation of Doubly Linked List.
  * @author   Hassan Tarek
  */
 
@@ -14,6 +14,7 @@ extern "C" {
 
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 #include <stdbool.h>
 #include <assert.h>
@@ -25,6 +26,7 @@ struct list;
 /* Typedefs */
 typedef struct node node;
 typedef struct list list;
+typedef uint8_t byte;
 
 /**
  * Define the struct represent the node that make list.
@@ -42,13 +44,14 @@ struct list {
     node* head;
     node* tail;
     size_t size;
+    size_t element_size;
 };
 
 
 /** F U N C T I O N S   P R O T O T Y P E S **/
 
 /* Initialization */
-void list_init(list* list);
+void list_init(list* list, size_t element_size);
 
 /* Accessing */
 node* list_back(const list* list);
