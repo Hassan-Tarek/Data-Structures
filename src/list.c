@@ -26,15 +26,15 @@ static node* list_create_node(const void* val, size_t size, node* next, node* pr
  *
  * @param node The node wanted to be freed.
  */
-static void list_free_node(node* node) {
-    assert(node != NULL);
+static void list_free_node(node** node) {
+    assert(node != NULL && *node != NULL);
 
-    if(node->val) {
-        free(node->val);
-        node->val = NULL;
+    if ((*node)->val != NULL) {
+        free((*node)->val);
+        (*node)->val = NULL;
     }
-    free(node);
-    node = NULL;
+    free(*node);
+    *node = NULL;
 }
 
 /**
@@ -200,7 +200,11 @@ void list_pop_back(list* list) {
         list->tail = list->tail->prev;
         list->tail->next = NULL;
     }
-    list_free_node(temp);
+    else {
+        list->head = NULL;
+        list->tail = NULL;
+    }
+    list_free_node(&temp);
     list->size--;
 }
 
@@ -217,7 +221,11 @@ void list_pop_front(list* list) {
         list->head = list->head->next;
         list->head->prev = NULL;
     }
-    list_free_node(temp);
+    else {
+        list->head = NULL;
+        list->tail = NULL;
+    }
+    list_free_node(&temp);
     list->size--;
 }
 
@@ -247,7 +255,7 @@ void list_remove_at(list* list, size_t index) {
         cur->next->prev = cur->prev;
         cur->next = NULL;
         cur->prev = NULL;
-        list_free_node(cur);
+        list_free_node(&cur);
         list->size--;
     }
 }
