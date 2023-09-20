@@ -269,15 +269,32 @@ void list_remove_at(list* list, size_t index) {
 void list_remove(list* list, const void* val) {
     assert(list != NULL && val != NULL);
 
-    size_t offset = 0;
     node* cur = list->head;
-    while(cur != NULL && offset < list->size) {
+    while (cur != NULL) {
         int cmp = memcmp(cur->val, val, list->element_size);
-        if(cmp == 0) {
-            cur = cur->next;
-            list_remove_at(list, offset);
+        if (cmp == 0) {
+            if (cur == list->head) {
+                list_pop_front(list);
+                cur = list->head;
+            }
+            else if (cur == list->tail) {
+                list_pop_back(list);
+                cur = NULL;
+            }
+            else {
+                node* temp = cur;
+                cur = cur->next;
+                cur->prev = temp->prev;
+                temp->prev->next = cur;
+                temp->next = NULL;
+                temp->prev = NULL;
+                list_free_node(&temp);
+                list->size--;
+            }
         }
-        offset++;
+        else {
+            cur = cur->next;
+        }
     }
 }
 
@@ -369,7 +386,7 @@ void list_copy_to_array(const list* list, void* array) {
 
     size_t offset = 0;
     list_for_each(node, list) {
-        memcpy(array + offset * sizeof(*node->val), node->val, sizeof(*node->val));
+        memcpy(array + offset * list->element_size, node->val, list->element_size);
         offset++;
     }
 }
@@ -389,8 +406,7 @@ void list_sort(list* list, int (*compare)(const void* right, const void* left)) 
         node_arr[offset] = node;
         offset++;
     }
-    qsort(node_arr, list->size,
-          list->size * sizeof(node), compare);
+    qsort(node_arr, list->size, sizeof(node *), compare);
 
     node* cur = node_arr[0];
     list->head = cur;
