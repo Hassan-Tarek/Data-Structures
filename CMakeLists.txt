@@ -3,4 +3,4 @@ project(DS C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(DS src/stack.h src/stack.c test/test_stack.c)
+add_executable(DS src/queue.h src/queue.c test/test_queue.c)
